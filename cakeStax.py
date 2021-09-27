@@ -19,7 +19,7 @@ logging.info('Reading config')
 your_wallet_key = 'insertYourKeyHere'
 rpc_uri = 'https://bsc-dataseed3.ninicoin.io/'
 seekContract = '0xc27732fE1b810985c0BCD3Bf9ecd0A5e6614f8A6'
-MinHatch = 1
+MinHatch = 0.1
 PollSeconds = 60
 
 compound_pct = Decimal('.01')
