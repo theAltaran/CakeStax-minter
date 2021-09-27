@@ -86,7 +86,7 @@ async def check_for_compound(poll_interval):
         pending = pit.functions.getCakeSinceCakeBake(account.address).call()
         pending = pending / 100000000
         miners = pit.functions.cakeMiners(account.address).call()
-        logging.info(f'\tMy current miners: {miners}')
+        logging.info(f'\tMy current bunnies: {miners}')
         # if pending / deposit < compound_pct:
         #logging.info(f'\tPending amount: {pending}')
         if pending < MinHatch:
