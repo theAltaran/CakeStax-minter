@@ -42,15 +42,15 @@ def fetch_abi(contract):
             abi = abi_file.read()
             logging.info('found abi file')
     else:
-        logging.info('Loading abi from polygonscan to save as file')
+        logging.info('Loading abi from bscscan to save as file')
         # TODO: Error handling
 		
-        url = 'https://api.polygonscan.com/api?module=contract&action=getabi&address=' + contract
+        url = 'https://api.bscscan.com/api?module=contract&action=getabi&address=' + contract
         abi_response = urlopen(Request(url, headers={'User-Agent': 'Mozilla'})).read().decode('utf8')
-        #abi = json.loads(abi_response)['result']
+        abi = json.loads(abi_response)['result']
 		# polygonscan api is busted at the moment so just copy the abi json in to the variable
-        abi = json.loads(abiPolygon)['result']
-        logging.info('Loaded abi from polygonscan')
+        #abi = json.loads(abiPolygon)['result']
+        logging.info('Loaded abi from bscscan')
 
     with open(filename, 'w') as abi_file:
         abi_file.write(abi)
@@ -79,14 +79,16 @@ pit_abi = fetch_abi(pit_address)
 
 pit = web3.eth.contract(pit_address, abi=pit_abi)
 #deposit = pit.functions.userInfo(0, account.address).call()[0]
+miners = pit.functions.cakeMiners(account.address).call()
+logging.info(f'\tMy current bunnies: {miners}')
 
 async def check_for_compound(poll_interval):
     global deposit
     while True:
         pending = pit.functions.getCakeSinceCakeBake(account.address).call()
         pending = pending / 100000000
-        miners = pit.functions.cakeMiners(account.address).call()
-        logging.info(f'\tMy current bunnies: {miners}')
+        
+        #logging.info(f'\tMy current bunnies: {miners}')
         # if pending / deposit < compound_pct:
         #logging.info(f'\tPending amount: {pending}')
         if pending < MinHatch:
@@ -98,7 +100,8 @@ async def check_for_compound(poll_interval):
 
             print(web3.eth.waitForTransactionReceipt(txn))
             #deposit += pending
-            
+            miners = pit.functions.cakeMiners(account.address).call()
+            logging.info(f'\tMy current bunnies: {miners}')
             
         await asyncio.sleep(poll_interval)
 
